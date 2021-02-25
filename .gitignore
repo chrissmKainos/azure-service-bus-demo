@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/azure.service.bus.demo/bin/Debug/netcoreapp3.1
+/azure.service.bus.demo/obj
