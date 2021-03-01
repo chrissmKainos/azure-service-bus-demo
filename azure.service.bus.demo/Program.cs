@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using System;
 using System.IO;
 
 namespace azure.service.bus.demo
@@ -17,11 +18,11 @@ namespace azure.service.bus.demo
             var configuration = builder.Build();
             ConfigurationBinder.Bind(configuration.GetSection("AppSettings"), appSettings);
 
-            // send messages to the queue
-            await Sender.SendMessagesAsync(appSettings);
+            string queueOrTopicName = appSettings.UseTopic ? appSettings.DemoTopicName : appSettings.DemoQueueName;
+            string subscriptionName = appSettings.UseTopic ? appSettings.DemoSubscriptionName : string.Empty;
 
-            // receive message from the queue
-            await Receiver.ReceiveMessagesAsync(appSettings);
+            await Sender.SendMessagesAsync(appSettings.ServiceBusConnectionString, queueOrTopicName);
+            await Receiver.ReceiveMessagesAsync(appSettings.ServiceBusConnectionString, queueOrTopicName, subscriptionName, appSettings.UseTopic);
         }
     }
 }

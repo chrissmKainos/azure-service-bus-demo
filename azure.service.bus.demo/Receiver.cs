@@ -20,11 +20,14 @@ namespace azure.service.bus.demo
             return Task.CompletedTask;
         }
 
-        public static async Task ReceiveMessagesAsync(AppSettings appSettings)
+        public static async Task ReceiveMessagesAsync(string serviceBusConnectionString, string queueOrTopicName,  string subscriptionName, bool useTopics)
         {
-            await using ServiceBusClient client = new ServiceBusClient(appSettings.ServiceBusConnectionString);
-            // create a processor that we can use to process the messages
-            ServiceBusProcessor processor = client.CreateProcessor(appSettings.DemoQueueName, new ServiceBusProcessorOptions());
+            await using ServiceBusClient client = new ServiceBusClient(serviceBusConnectionString);
+
+            // create a processor that we can use to process the messages, either with a queue or a topic/subscription
+            ServiceBusProcessor processor = useTopics
+                ? client.CreateProcessor(queueOrTopicName, subscriptionName, new ServiceBusProcessorOptions { })
+                : client.CreateProcessor(queueOrTopicName, new ServiceBusProcessorOptions());
 
             // add handler to process messages
             processor.ProcessMessageAsync += MessageHandler;
